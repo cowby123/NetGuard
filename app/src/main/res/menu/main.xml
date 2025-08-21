@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:netguard="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
     <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search_white_24dp"
@@ -55,9 +55,11 @@
         android:id="@+id/menu_malware"
         android:checkable="true"
         android:title="@string/setting_malware"/>
+    -->
     <item
         android:id="@+id/menu_log"
         android:title="@string/menu_log"/>
+    <!--
     <item
         android:id="@+id/menu_settings"
         android:title="@string/menu_settings"/>
@@ -79,4 +81,5 @@
     <item
         android:id="@+id/menu_apps"
         android:title="@string/menu_apps"/>
+    -->
 </menu>

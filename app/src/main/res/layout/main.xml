@@ -48,6 +48,7 @@
             android:text="@string/menu_log"
             android:textAppearance="@style/TextSmall" />
 
+        <!--
         <LinearLayout
             android:id="@+id/llUsage"
             android:layout_width="match_parent"
@@ -102,6 +103,7 @@
                 android:text="@android:string/ok"
                 android:textAppearance="@style/TextSmall" />
         </LinearLayout>
+        -->
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
@@ -117,6 +119,7 @@
                 android:scrollbars="vertical" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        <!--
         <LinearLayout
             android:id="@+id/llWhitelist"
             android:layout_width="match_parent"
@@ -197,6 +200,7 @@
                 android:text="@android:string/ok"
                 android:textAppearance="@style/TextSmall" />
         </LinearLayout>
+        -->
 
         <LinearLayout
             android:id="@+id/llSupport"
