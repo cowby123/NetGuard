@@ -69,9 +69,6 @@ import androidx.core.widget.CompoundButtonCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-// import com.bumptech.glide.load.DecodeFormat;
-// import com.bumptech.glide.request.RequestOptions;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,7 +85,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     private int colorOn;
     private int colorOff;
     private int colorGrayed;
-    // private int iconSize;
     private boolean wifiActive = true;
     private boolean otherActive = true;
     private boolean live = true;
@@ -115,9 +111,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         public View view;
 
         public LinearLayout llApplication;
-        // public ImageView ivIcon;
-        // public ImageView ivExpander; // Removed expandable indicator
-        // public TextView tvName;
 
         public TextView tvHosts;
 
@@ -134,7 +127,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         public TextView tvRemarkMessaging;
         public TextView tvRemarkDownload;
 
-        // public LinearLayout llConfiguration; // Removed expandable section
         public TextView tvUid;
         public TextView tvPackage;
         public TextView tvVersion;
@@ -175,9 +167,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             view = itemView;
 
             llApplication = itemView.findViewById(R.id.llApplication);
-            // ivIcon = itemView.findViewById(R.id.ivIcon);
-            // ivExpander = itemView.findViewById(R.id.ivExpander);
-            // tvName = itemView.findViewById(R.id.tvName);
 
             tvHosts = itemView.findViewById(R.id.tvHosts);
 
@@ -194,7 +183,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             tvRemarkMessaging = itemView.findViewById(R.id.tvRemarkMessaging);
             tvRemarkDownload = itemView.findViewById(R.id.tvRemarkDownload);
 
-            // llConfiguration = itemView.findViewById(R.id.llConfiguration);
             tvUid = itemView.findViewById(R.id.tvUid);
             tvPackage = itemView.findViewById(R.id.tvPackage);
             tvVersion = itemView.findViewById(R.id.tvVersion);
@@ -284,11 +272,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         colorGrayed = ContextCompat.getColor(context, R.color.colorGrayed);
 
-        // TypedValue typedValue = new TypedValue();
-        // context.getTheme().resolveAttribute(android.R.attr.listPreferredItemHeight, typedValue, true);
-        // int height = TypedValue.complexToDimensionPixelSize(typedValue.data, context.getResources().getDisplayMetrics());
-        // this.iconSize = Math.round(height * context.getResources().getDisplayMetrics().density + 0.5f);
-
         setHasStableIds(true);
     }
 
@@ -345,43 +328,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         // Get rule
         final Rule rule = listFiltered.get(position);
 
-        // Handle expanding/collapsing
-        // holder.llApplication.setOnClickListener(new View.OnClickListener() {
-        //     @Override
-        //     public void onClick(View view) {
-        //         rule.expanded = !rule.expanded;
-        //         notifyItemChanged(holder.getAdapterPosition());
-        //     }
-        // });
-
         // Show if non default rules
         holder.itemView.setBackgroundColor(rule.changed ? colorChanged : Color.TRANSPARENT);
-
-        // Show expand/collapse indicator
-        // holder.ivExpander.setImageLevel(rule.expanded ? 1 : 0);
-
-        // // Show application icon
-        // if (rule.icon <= 0)
-        //     holder.ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
-        // else {
-        //     Uri uri = Uri.parse("android.resource://" + rule.packageName + "/" + rule.icon);
-        //     GlideApp.with(holder.itemView.getContext())
-        //             .applyDefaultRequestOptions(new RequestOptions().format(DecodeFormat.PREFER_RGB_565))
-        //             .load(uri)
-        //             //.diskCacheStrategy(DiskCacheStrategy.NONE)
-        //             //.skipMemoryCache(true)
-        //             .override(iconSize, iconSize)
-        //             .into(holder.ivIcon);
-        // }
-
-        // // Show application label
-        // holder.tvName.setText(rule.name);
-
-        // // Show application state
-        // int color = rule.system ? colorOff : colorText;
-        // if (!rule.internet || !rule.enabled)
-        //     color = Color.argb(128, Color.red(color), Color.green(color), Color.blue(color));
-        // holder.tvName.setTextColor(color);
 
         holder.tvHosts.setVisibility(rule.hosts > 0 ? View.VISIBLE : View.GONE);
         holder.tvHosts.setText(Long.toString(rule.hosts));
@@ -458,9 +406,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         holder.tvRemarkMessaging.setVisibility(messaging.contains(rule.packageName) ? View.VISIBLE : View.GONE);
         holder.tvRemarkDownload.setVisibility(download.contains(rule.packageName) ? View.VISIBLE : View.GONE);
-
-        // Expanded configuration section
-        // holder.llConfiguration.setVisibility(rule.expanded ? View.VISIBLE : View.GONE);
 
         // Show application details
         holder.tvUid.setText(Integer.toString(rule.uid));
@@ -866,9 +811,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
-
-        //Context context = holder.itemView.getContext();
-        //GlideApp.with(context).clear(holder.ivIcon);
 
         CursorAdapter adapter = (CursorAdapter) holder.lvAccess.getAdapter();
         if (adapter != null) {

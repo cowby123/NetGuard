@@ -21,34 +21,6 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <!--
-            <ImageView
-                android:id="@+id/ivExpander"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:alpha="0.5"
-                android:src="?attr/expander" />
-            -->
-
-            <!--
-            <ImageView
-                android:id="@+id/ivIcon"
-                android:layout_width="?android:attr/listPreferredItemHeightSmall"
-                android:layout_height="?android:attr/listPreferredItemHeightSmall"
-                android:layout_gravity="center_vertical" />
-
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:paddingStart="8dp"
-                android:paddingLeft="8dp"
-                android:textAppearance="@style/TextMedium" />
-            -->
         </LinearLayout>
 
         <TextView
