@@ -116,7 +116,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         public LinearLayout llApplication;
         public ImageView ivIcon;
-        public ImageView ivExpander;
+        // public ImageView ivExpander; // Removed expandable indicator
         public TextView tvName;
 
         public TextView tvHosts;
@@ -134,7 +134,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         public TextView tvRemarkMessaging;
         public TextView tvRemarkDownload;
 
-        public LinearLayout llConfiguration;
+        // public LinearLayout llConfiguration; // Removed expandable section
         public TextView tvUid;
         public TextView tvPackage;
         public TextView tvVersion;
@@ -176,7 +176,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             llApplication = itemView.findViewById(R.id.llApplication);
             ivIcon = itemView.findViewById(R.id.ivIcon);
-            ivExpander = itemView.findViewById(R.id.ivExpander);
+            // ivExpander = itemView.findViewById(R.id.ivExpander);
             tvName = itemView.findViewById(R.id.tvName);
 
             tvHosts = itemView.findViewById(R.id.tvHosts);
@@ -194,7 +194,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             tvRemarkMessaging = itemView.findViewById(R.id.tvRemarkMessaging);
             tvRemarkDownload = itemView.findViewById(R.id.tvRemarkDownload);
 
-            llConfiguration = itemView.findViewById(R.id.llConfiguration);
+            // llConfiguration = itemView.findViewById(R.id.llConfiguration);
             tvUid = itemView.findViewById(R.id.tvUid);
             tvPackage = itemView.findViewById(R.id.tvPackage);
             tvVersion = itemView.findViewById(R.id.tvVersion);
@@ -346,19 +346,19 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         final Rule rule = listFiltered.get(position);
 
         // Handle expanding/collapsing
-        holder.llApplication.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                rule.expanded = !rule.expanded;
-                notifyItemChanged(holder.getAdapterPosition());
-            }
-        });
+        // holder.llApplication.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View view) {
+        //         rule.expanded = !rule.expanded;
+        //         notifyItemChanged(holder.getAdapterPosition());
+        //     }
+        // });
 
         // Show if non default rules
         holder.itemView.setBackgroundColor(rule.changed ? colorChanged : Color.TRANSPARENT);
 
         // Show expand/collapse indicator
-        holder.ivExpander.setImageLevel(rule.expanded ? 1 : 0);
+        // holder.ivExpander.setImageLevel(rule.expanded ? 1 : 0);
 
         // Show application icon
         if (rule.icon <= 0)
@@ -460,7 +460,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         holder.tvRemarkDownload.setVisibility(download.contains(rule.packageName) ? View.VISIBLE : View.GONE);
 
         // Expanded configuration section
-        holder.llConfiguration.setVisibility(rule.expanded ? View.VISIBLE : View.GONE);
+        // holder.llConfiguration.setVisibility(rule.expanded ? View.VISIBLE : View.GONE);
 
         // Show application details
         holder.tvUid.setText(Integer.toString(rule.uid));

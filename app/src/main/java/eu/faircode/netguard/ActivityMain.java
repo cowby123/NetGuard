@@ -62,7 +62,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -88,7 +87,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private ImageView ivMetered;
     private SwipeRefreshLayout swipeRefresh;
     private AdapterRule adapter = null;
-    private MenuItem menuSearch = null;
+    // private MenuItem menuSearch = null; // Removed search box
     private AlertDialog dialogFirst = null;
     private AlertDialog dialogVpn = null;
     private AlertDialog dialogDoze = null;
@@ -477,7 +476,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if (intent.hasExtra(EXTRA_REFRESH))
                 updateApplicationList(intent.getStringExtra(EXTRA_SEARCH));
             else
-                updateSearch(intent.getStringExtra(EXTRA_SEARCH));
+                ; // updateSearch(intent.getStringExtra(EXTRA_SEARCH)); // Search removed
             checkExtras(intent);
         }
     }
@@ -824,7 +823,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 if (running) {
                     if (adapter != null) {
                         adapter.set(result);
-                        updateSearch(search);
+                        // updateSearch(search); // Search removed
                     }
 
                     if (swipeRefresh != null) {
@@ -836,6 +835,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    /*
     private void updateSearch(String search) {
         if (menuSearch != null) {
             SearchView searchView = (SearchView) menuSearch.getActionView();
@@ -848,6 +848,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         }
     }
+    */
 
     private void checkDoze() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
