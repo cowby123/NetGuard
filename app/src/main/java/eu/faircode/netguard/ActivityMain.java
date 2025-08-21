@@ -81,7 +81,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static final String TAG = "NetGuard.Main";
 
     private boolean running = false;
-    private ImageView ivIcon;
     private ImageView ivQueue;
     private SwitchCompat swEnabled;
     private ImageView ivMetered;
@@ -158,19 +157,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Action bar
         final View actionView = getLayoutInflater().inflate(R.layout.actionmain, null, false);
-        ivIcon = actionView.findViewById(R.id.ivIcon);
         ivQueue = actionView.findViewById(R.id.ivQueue);
         swEnabled = actionView.findViewById(R.id.swEnabled);
         ivMetered = actionView.findViewById(R.id.ivMetered);
-
-        // Icon
-        ivIcon.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                menu_about();
-                return true;
-            }
-        });
 
         // Title
         getSupportActionBar().setTitle(null);
@@ -705,9 +694,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
             if (adapter != null)
                 if (intent.hasExtra(EXTRA_CONNECTED) && intent.hasExtra(EXTRA_METERED)) {
-                    ivIcon.setImageResource(Util.isNetworkActive(ActivityMain.this)
-                            ? R.drawable.ic_security_white_24dp
-                            : R.drawable.ic_security_white_24dp_60);
                     if (intent.getBooleanExtra(EXTRA_CONNECTED, false)) {
                         if (intent.getBooleanExtra(EXTRA_METERED, false))
                             adapter.setMobileActive();
@@ -729,7 +715,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
             int size = intent.getIntExtra(EXTRA_SIZE, -1);
-            ivIcon.setVisibility(size == 0 ? View.VISIBLE : View.GONE);
             ivQueue.setVisibility(size == 0 ? View.GONE : View.VISIBLE);
         }
     };
