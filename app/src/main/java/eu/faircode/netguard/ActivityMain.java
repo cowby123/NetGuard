@@ -364,6 +364,20 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         });
 
+        Button btnLog = findViewById(R.id.btnLog);
+        btnLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Util.canFilter(ActivityMain.this))
+                    if (IAB.isPurchased(ActivityPro.SKU_LOG, ActivityMain.this))
+                        startActivity(new Intent(ActivityMain.this, ActivityLog.class));
+                    else
+                        startActivity(new Intent(ActivityMain.this, ActivityPro.class));
+                else
+                    Toast.makeText(ActivityMain.this, R.string.msg_unavailable, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         showHints();
 
         // Listen for preference changes
