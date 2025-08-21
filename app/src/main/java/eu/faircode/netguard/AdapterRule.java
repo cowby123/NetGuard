@@ -29,7 +29,7 @@ import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Rect;
+// import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,7 +43,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.TouchDelegate;
+// import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -69,6 +69,9 @@ import androidx.core.widget.CompoundButtonCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+// import com.bumptech.glide.load.DecodeFormat;
+// import com.bumptech.glide.request.RequestOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,6 +88,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     private int colorOn;
     private int colorOff;
     private int colorGrayed;
+    // private int iconSize;
     private boolean wifiActive = true;
     private boolean otherActive = true;
     private boolean live = true;
@@ -111,22 +115,26 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         public View view;
 
         public LinearLayout llApplication;
+        // public ImageView ivIcon;
+        // public ImageView ivExpander; // Removed expandable indicator
+        // public TextView tvName;
 
         public TextView tvHosts;
 
         public RelativeLayout rlLockdown;
         public ImageView ivLockdown;
 
-        public CheckBox cbWifi;
-        public ImageView ivScreenWifi;
+        // public CheckBox cbWifi;
+        // public ImageView ivScreenWifi;
 
-        public CheckBox cbOther;
-        public ImageView ivScreenOther;
-        public TextView tvRoaming;
+        // public CheckBox cbOther;
+        // public ImageView ivScreenOther;
+        // public TextView tvRoaming;
 
         public TextView tvRemarkMessaging;
         public TextView tvRemarkDownload;
 
+        // public LinearLayout llConfiguration; // Removed expandable section
         public TextView tvUid;
         public TextView tvPackage;
         public TextView tvVersion;
@@ -139,13 +147,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         public CheckBox cbApply;
 
-        public LinearLayout llScreenWifi;
-        public ImageView ivWifiLegend;
-        public CheckBox cbScreenWifi;
+        // public LinearLayout llScreenWifi;
+        // public ImageView ivWifiLegend;
+        // public CheckBox cbScreenWifi;
 
-        public LinearLayout llScreenOther;
-        public ImageView ivOtherLegend;
-        public CheckBox cbScreenOther;
+        // public LinearLayout llScreenOther;
+        // public ImageView ivOtherLegend;
+        // public CheckBox cbScreenOther;
 
         public CheckBox cbRoaming;
 
@@ -167,22 +175,26 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             view = itemView;
 
             llApplication = itemView.findViewById(R.id.llApplication);
+            // ivIcon = itemView.findViewById(R.id.ivIcon);
+            // ivExpander = itemView.findViewById(R.id.ivExpander);
+            // tvName = itemView.findViewById(R.id.tvName);
 
             tvHosts = itemView.findViewById(R.id.tvHosts);
 
             rlLockdown = itemView.findViewById(R.id.rlLockdown);
             ivLockdown = itemView.findViewById(R.id.ivLockdown);
 
-            cbWifi = itemView.findViewById(R.id.cbWifi);
-            ivScreenWifi = itemView.findViewById(R.id.ivScreenWifi);
+            // cbWifi = itemView.findViewById(R.id.cbWifi);
+            // ivScreenWifi = itemView.findViewById(R.id.ivScreenWifi);
 
-            cbOther = itemView.findViewById(R.id.cbOther);
-            ivScreenOther = itemView.findViewById(R.id.ivScreenOther);
-            tvRoaming = itemView.findViewById(R.id.tvRoaming);
+            // cbOther = itemView.findViewById(R.id.cbOther);
+            // ivScreenOther = itemView.findViewById(R.id.ivScreenOther);
+            // tvRoaming = itemView.findViewById(R.id.tvRoaming);
 
             tvRemarkMessaging = itemView.findViewById(R.id.tvRemarkMessaging);
             tvRemarkDownload = itemView.findViewById(R.id.tvRemarkDownload);
 
+            // llConfiguration = itemView.findViewById(R.id.llConfiguration);
             tvUid = itemView.findViewById(R.id.tvUid);
             tvPackage = itemView.findViewById(R.id.tvPackage);
             tvVersion = itemView.findViewById(R.id.tvVersion);
@@ -195,13 +207,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             cbApply = itemView.findViewById(R.id.cbApply);
 
-            llScreenWifi = itemView.findViewById(R.id.llScreenWifi);
-            ivWifiLegend = itemView.findViewById(R.id.ivWifiLegend);
-            cbScreenWifi = itemView.findViewById(R.id.cbScreenWifi);
+            // llScreenWifi = itemView.findViewById(R.id.llScreenWifi);
+            // ivWifiLegend = itemView.findViewById(R.id.ivWifiLegend);
+            // cbScreenWifi = itemView.findViewById(R.id.cbScreenWifi);
 
-            llScreenOther = itemView.findViewById(R.id.llScreenOther);
-            ivOtherLegend = itemView.findViewById(R.id.ivOtherLegend);
-            cbScreenOther = itemView.findViewById(R.id.cbScreenOther);
+            // llScreenOther = itemView.findViewById(R.id.llScreenOther);
+            // ivOtherLegend = itemView.findViewById(R.id.ivOtherLegend);
+            // cbScreenOther = itemView.findViewById(R.id.cbScreenOther);
 
             cbRoaming = itemView.findViewById(R.id.cbRoaming);
 
@@ -218,31 +230,31 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             btnClearAccess = itemView.findViewById(R.id.btnClearAccess);
             cbNotify = itemView.findViewById(R.id.cbNotify);
 
-            final View wifiParent = (View) cbWifi.getParent();
-            wifiParent.post(new Runnable() {
-                public void run() {
-                    Rect rect = new Rect();
-                    cbWifi.getHitRect(rect);
-                    rect.bottom += rect.top;
-                    rect.right += rect.left;
-                    rect.top = 0;
-                    rect.left = 0;
-                    wifiParent.setTouchDelegate(new TouchDelegate(rect, cbWifi));
-                }
-            });
+            // final View wifiParent = (View) cbWifi.getParent();
+            // wifiParent.post(new Runnable() {
+            //     public void run() {
+            //         Rect rect = new Rect();
+            //         cbWifi.getHitRect(rect);
+            //         rect.bottom += rect.top;
+            //         rect.right += rect.left;
+            //         rect.top = 0;
+            //         rect.left = 0;
+            //         wifiParent.setTouchDelegate(new TouchDelegate(rect, cbWifi));
+            //     }
+            // });
 
-            final View otherParent = (View) cbOther.getParent();
-            otherParent.post(new Runnable() {
-                public void run() {
-                    Rect rect = new Rect();
-                    cbOther.getHitRect(rect);
-                    rect.bottom += rect.top;
-                    rect.right += rect.left;
-                    rect.top = 0;
-                    rect.left = 0;
-                    otherParent.setTouchDelegate(new TouchDelegate(rect, cbOther));
-                }
-            });
+            // final View otherParent = (View) cbOther.getParent();
+            // otherParent.post(new Runnable() {
+            //     public void run() {
+            //         Rect rect = new Rect();
+            //         cbOther.getHitRect(rect);
+            //         rect.bottom += rect.top;
+            //         rect.right += rect.left;
+            //         rect.top = 0;
+            //         rect.left = 0;
+            //         otherParent.setTouchDelegate(new TouchDelegate(rect, cbOther));
+            //     }
+            // });
         }
     }
 
@@ -271,6 +283,11 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         colorOff = tv.data;
 
         colorGrayed = ContextCompat.getColor(context, R.color.colorGrayed);
+
+        // TypedValue typedValue = new TypedValue();
+        // context.getTheme().resolveAttribute(android.R.attr.listPreferredItemHeight, typedValue, true);
+        // int height = TypedValue.complexToDimensionPixelSize(typedValue.data, context.getResources().getDisplayMetrics());
+        // this.iconSize = Math.round(height * context.getResources().getDisplayMetrics().density + 0.5f);
 
         setHasStableIds(true);
     }
@@ -328,8 +345,45 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         // Get rule
         final Rule rule = listFiltered.get(position);
 
+        // Handle expanding/collapsing
+        // holder.llApplication.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View view) {
+        //         rule.expanded = !rule.expanded;
+        //         notifyItemChanged(holder.getAdapterPosition());
+        //     }
+        // });
+
         // Show if non default rules
         holder.itemView.setBackgroundColor(rule.changed ? colorChanged : Color.TRANSPARENT);
+
+        // Show expand/collapse indicator
+        // holder.ivExpander.setImageLevel(rule.expanded ? 1 : 0);
+
+        /*
+        // Show application icon
+        if (rule.icon <= 0)
+            holder.ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
+        else {
+            Uri uri = Uri.parse("android.resource://" + rule.packageName + "/" + rule.icon);
+            GlideApp.with(holder.itemView.getContext())
+                    .applyDefaultRequestOptions(new RequestOptions().format(DecodeFormat.PREFER_RGB_565))
+                    .load(uri)
+                    //.diskCacheStrategy(DiskCacheStrategy.NONE)
+                    //.skipMemoryCache(true)
+                    .override(iconSize, iconSize)
+                    .into(holder.ivIcon);
+        }
+
+        // Show application label
+        holder.tvName.setText(rule.name);
+
+        // Show application state
+        int color = rule.system ? colorOff : colorText;
+        if (!rule.internet || !rule.enabled)
+            color = Color.argb(128, Color.red(color), Color.green(color), Color.blue(color));
+        holder.tvName.setTextColor(color);
+        */
 
         holder.tvHosts.setVisibility(rule.hosts > 0 ? View.VISIBLE : View.GONE);
         holder.tvHosts.setText(Long.toString(rule.hosts));
@@ -350,6 +404,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         boolean screen_on = prefs.getBoolean("screen_on", true);
 
+        /*
         // Wi-Fi settings
         holder.cbWifi.setEnabled(rule.apply);
         holder.cbWifi.setAlpha(wifiActive ? 1 : 0.5f);
@@ -403,9 +458,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         holder.tvRoaming.setTextColor(rule.apply ? colorOff : colorGrayed);
         holder.tvRoaming.setAlpha(otherActive ? 1 : 0.5f);
         holder.tvRoaming.setVisibility(rule.roaming && (!rule.other_blocked || rule.screen_other) ? View.VISIBLE : View.INVISIBLE);
+        */
 
         holder.tvRemarkMessaging.setVisibility(messaging.contains(rule.packageName) ? View.VISIBLE : View.GONE);
         holder.tvRemarkDownload.setVisibility(download.contains(rule.packageName) ? View.VISIBLE : View.GONE);
+
+        // Expanded configuration section
+        // holder.llConfiguration.setVisibility(rule.expanded ? View.VISIBLE : View.GONE);
 
         // Show application details
         holder.tvUid.setText(Integer.toString(rule.uid));
@@ -472,6 +531,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
         });
 
+        /*
         // Show Wi-Fi screen on condition
         holder.llScreenWifi.setVisibility(screen_on ? View.VISIBLE : View.GONE);
         holder.cbScreenWifi.setEnabled(rule.wifi_blocked && rule.apply);
@@ -509,6 +569,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 updateRule(context, rule, true, listAll);
             }
         });
+        */
 
         // Show roaming condition
         holder.cbRoaming.setEnabled((!rule.other_blocked || rule.screen_other) && rule.apply);
@@ -550,10 +611,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     @Override
                     public void onSure() {
                         holder.cbApply.setChecked(true);
-                        holder.cbWifi.setChecked(rule.wifi_default);
-                        holder.cbOther.setChecked(rule.other_default);
-                        holder.cbScreenWifi.setChecked(rule.screen_wifi_default);
-                        holder.cbScreenOther.setChecked(rule.screen_other_default);
+                        // holder.cbWifi.setChecked(rule.wifi_default);
+                        // holder.cbOther.setChecked(rule.other_default);
+                        // holder.cbScreenWifi.setChecked(rule.screen_wifi_default);
+                        // holder.cbScreenOther.setChecked(rule.screen_other_default);
                         holder.cbRoaming.setChecked(rule.roaming_default);
                         holder.cbLockdown.setChecked(false);
                     }
@@ -811,6 +872,9 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
+
+        //Context context = holder.itemView.getContext();
+        //GlideApp.with(context).clear(holder.ivIcon);
 
         CursorAdapter adapter = (CursorAdapter) holder.lvAccess.getAdapter();
         if (adapter != null) {
