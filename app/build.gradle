@@ -1,9 +1,17 @@
 apply plugin: 'com.android.application'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystorePropertiesFile = rootProject.file("keystore.properties")
 
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+} else {
+    println ":warning: keystore.properties 不存在，使用 Android 預設 debug.keystore"
+    keystoreProperties['storePassword'] = 'android'
+    keystoreProperties['keyPassword'] = 'android'
+    keystoreProperties['keyAlias'] = 'androiddebugkey'
+    keystoreProperties['storeFile'] = "${System.properties['user.home']}/.android/debug.keystore"
+}
 android {
     compileSdkVersion = 35
 
