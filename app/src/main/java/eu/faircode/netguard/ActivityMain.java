@@ -94,6 +94,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public static final String EXTRA_CONNECTED = "Connected";
     public static final String EXTRA_METERED = "Metered";
     public static final String EXTRA_SIZE = "Size";
+    public static final String EXTRA_REFRESH = "Refresh";
+    public static final String EXTRA_SEARCH = "Search";
+    public static final String EXTRA_RELATED = "Related";
 
     private static final String MALWARE_URL = "https://urlhaus.abuse.ch/downloads/hostfile/";
 
