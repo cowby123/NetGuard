@@ -19,7 +19,6 @@ package eu.faircode.netguard;
     Copyright 2015-2024 by Marcel Bokhorst (M66B)
 */
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -60,19 +59,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Main";
@@ -81,8 +73,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private ImageView ivQueue;
     private SwitchCompat swEnabled;
     private ImageView ivMetered;
-    private SwipeRefreshLayout swipeRefresh;
-    private AdapterRule adapter = null;
     // private MenuItem menuSearch = null; // Removed search box
     private AlertDialog dialogFirst = null;
     private AlertDialog dialogVpn = null;
@@ -95,19 +85,18 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static final int REQUEST_VPN = 1;
     private static final int REQUEST_INVITE = 2;
     public static final int REQUEST_ROAMING = 3;
-    private static final int REQUEST_NOTIFICATIONS = 4;
 
     private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
 
     public static final String ACTION_RULES_CHANGED = "eu.faircode.netguard.ACTION_RULES_CHANGED";
     public static final String ACTION_QUEUE_CHANGED = "eu.faircode.netguard.ACTION_QUEUE_CHANGED";
-    public static final String EXTRA_REFRESH = "Refresh";
-    public static final String EXTRA_SEARCH = "Search";
-    public static final String EXTRA_RELATED = "Related";
     public static final String EXTRA_APPROVE = "Approve";
     public static final String EXTRA_CONNECTED = "Connected";
     public static final String EXTRA_METERED = "Metered";
     public static final String EXTRA_SIZE = "Size";
+    public static final String EXTRA_REFRESH = "Refresh";
+    public static final String EXTRA_SEARCH = "Search";
+    public static final String EXTRA_RELATED = "Related";
 
     private static final String MALWARE_URL = "https://urlhaus.abuse.ch/downloads/hostfile/";
 
@@ -286,41 +275,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         TextView tvDisabled = findViewById(R.id.tvDisabled);
         tvDisabled.setVisibility(enabled ? View.GONE : View.VISIBLE);
 
-        // Notification permissions
-        TextView tvNotifications = findViewById(R.id.tvNotifications);
-        tvNotifications.setVisibility(View.GONE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            tvNotifications.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_NOTIFICATIONS);
-                }
-            });
-
-        // Application list
-        RecyclerView rvApplication = findViewById(R.id.rvApplication);
-        rvApplication.setHasFixedSize(false);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setAutoMeasureEnabled(true);
-        rvApplication.setLayoutManager(llm);
-        adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
-        rvApplication.setAdapter(adapter);
-
-        // Swipe to refresh
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
-        swipeRefresh = findViewById(R.id.swipeRefresh);
-        swipeRefresh.setColorSchemeColors(Color.WHITE, Color.WHITE, Color.WHITE);
-        swipeRefresh.setProgressBackgroundColorSchemeColor(tv.data);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Rule.clearCache(ActivityMain.this);
-                ServiceSinkhole.reload("pull", ActivityMain.this, false);
-                updateApplicationList(null);
-            }
-        });
-
         Button btnLog = findViewById(R.id.btnLog);
         btnLog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -345,13 +299,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Listen for queue changes
         IntentFilter ifq = new IntentFilter(ACTION_QUEUE_CHANGED);
         LocalBroadcastManager.getInstance(this).registerReceiver(onQueueChanged, ifq);
-
-        // Listen for added/removed applications
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        intentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        intentFilter.addDataScheme("package");
-        ContextCompat.registerReceiver(this, packageChangedReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
 
         // First use
         if (!initialized) {
@@ -394,9 +341,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     .create();
             dialogFirst.show();
         }
-
-        // Fill application list
-        updateApplicationList(getIntent().getStringExtra(EXTRA_SEARCH));
 
         // Update IAB SKUs
         try {
@@ -442,14 +386,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             return;
 
         setIntent(intent);
-
-        if (Build.VERSION.SDK_INT >= MIN_SDK) {
-            if (intent.hasExtra(EXTRA_REFRESH))
-                updateApplicationList(intent.getStringExtra(EXTRA_SEARCH));
-            else
-                ; // updateSearch(intent.getStringExtra(EXTRA_SEARCH)); // Search removed
+        if (Build.VERSION.SDK_INT >= MIN_SDK)
             checkExtras(intent);
-        }
     }
 
     @Override
@@ -460,19 +398,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             super.onResume();
             return;
         }
-
-        DatabaseHelper.getInstance(this).addAccessChangedListener(accessChangedListener);
-        if (adapter != null)
-            adapter.notifyDataSetChanged();
-
-        boolean canNotify =
-                (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                        (ContextCompat.checkSelfPermission(this,
-                                android.Manifest.permission.POST_NOTIFICATIONS) ==
-                                PackageManager.PERMISSION_GRANTED));
-        TextView tvNotifications = findViewById(R.id.tvNotifications);
-        if (tvNotifications != null)
-            tvNotifications.setVisibility(canNotify ? View.GONE : View.VISIBLE);
 
         super.onResume();
 
@@ -502,7 +427,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
             return;
 
-        DatabaseHelper.getInstance(this).removeAccessChangedListener(accessChangedListener);
     }
 
     @Override
@@ -524,13 +448,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         running = false;
-        adapter = null;
 
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onRulesChanged);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onQueueChanged);
-        unregisterReceiver(packageChangedReceiver);
 
         if (dialogFirst != null) {
             dialogFirst.dismiss();
@@ -596,18 +518,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (requestCode == REQUEST_ROAMING) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ServiceSinkhole.reload("permission granted", this, false);
-        } else if (requestCode == REQUEST_NOTIFICATIONS) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED &&
-                    !ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.POST_NOTIFICATIONS))
-                try {
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                } catch (Throwable ex) {
-                    Log.e(TAG, ex + "\n" + ex.getStackTrace());
-                }
         }
     }
 
@@ -627,40 +537,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if (swEnabled.isChecked() != enabled)
                 swEnabled.setChecked(enabled);
 
-        } else if ("whitelist_wifi".equals(name) ||
-                "screen_on".equals(name) ||
-                "screen_wifi".equals(name) ||
-                "whitelist_other".equals(name) ||
-                "screen_other".equals(name) ||
-                "whitelist_roaming".equals(name) ||
-                "show_user".equals(name) ||
-                "show_system".equals(name) ||
-                "show_nointernet".equals(name) ||
-                "show_disabled".equals(name) ||
-                "sort".equals(name) ||
-                "imported".equals(name)) {
-            updateApplicationList(null);
-
-        } else if ("manage_system".equals(name)) {
-            invalidateOptionsMenu();
-            updateApplicationList(null);
-
         } else if ("theme".equals(name) || "dark_theme".equals(name))
             recreate();
     }
-
-    private DatabaseHelper.AccessChangedListener accessChangedListener = new DatabaseHelper.AccessChangedListener() {
-        @Override
-        public void onChanged() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (adapter != null && adapter.isLive())
-                        adapter.notifyDataSetChanged();
-                }
-            });
-        }
-    };
 
     private BroadcastReceiver onRulesChanged = new BroadcastReceiver() {
         @Override
@@ -668,20 +547,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
 
-            if (adapter != null)
-                if (intent.hasExtra(EXTRA_CONNECTED) && intent.hasExtra(EXTRA_METERED)) {
-                    if (intent.getBooleanExtra(EXTRA_CONNECTED, false)) {
-                        if (intent.getBooleanExtra(EXTRA_METERED, false))
-                            adapter.setMobileActive();
-                        else
-                            adapter.setWifiActive();
-                        ivMetered.setVisibility(Util.isMeteredNetwork(ActivityMain.this) ? View.VISIBLE : View.INVISIBLE);
-                    } else {
-                        adapter.setDisconnected();
-                        ivMetered.setVisibility(View.INVISIBLE);
-                    }
-                } else
-                    updateApplicationList(null);
+            if (intent.hasExtra(EXTRA_CONNECTED) && intent.hasExtra(EXTRA_METERED)) {
+                if (intent.getBooleanExtra(EXTRA_CONNECTED, false))
+                    ivMetered.setVisibility(intent.getBooleanExtra(EXTRA_METERED, false) &&
+                            Util.isMeteredNetwork(ActivityMain.this) ? View.VISIBLE : View.INVISIBLE);
+                else
+                    ivMetered.setVisibility(View.INVISIBLE);
+            }
         }
     };
 
@@ -692,15 +564,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Util.logExtras(intent);
             int size = intent.getIntExtra(EXTRA_SIZE, -1);
             ivQueue.setVisibility(size == 0 ? View.GONE : View.VISIBLE);
-        }
-    };
-
-    private BroadcastReceiver packageChangedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "Received " + intent);
-            Util.logExtras(intent);
-            updateApplicationList(null);
         }
     };
 
@@ -756,60 +619,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             swEnabled.toggle();
         }
     }
-
-    private void updateApplicationList(final String search) {
-        Log.i(TAG, "Update search=" + search);
-
-        new AsyncTask<Object, Object, List<Rule>>() {
-            private boolean refreshing = true;
-
-            @Override
-            protected void onPreExecute() {
-                swipeRefresh.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (refreshing)
-                            swipeRefresh.setRefreshing(true);
-                    }
-                });
-            }
-
-            @Override
-            protected List<Rule> doInBackground(Object... arg) {
-                return Rule.getRules(false, ActivityMain.this);
-            }
-
-            @Override
-            protected void onPostExecute(List<Rule> result) {
-                if (running) {
-                    if (adapter != null) {
-                        adapter.set(result);
-                        // updateSearch(search); // Search removed
-                    }
-
-                    if (swipeRefresh != null) {
-                        refreshing = false;
-                        swipeRefresh.setRefreshing(false);
-                    }
-                }
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    /*
-    private void updateSearch(String search) {
-        if (menuSearch != null) {
-            SearchView searchView = (SearchView) menuSearch.getActionView();
-            if (search == null) {
-                if (menuSearch.isActionViewExpanded())
-                    adapter.getFilter().filter(searchView.getQuery().toString());
-            } else {
-                menuSearch.expandActionView();
-                searchView.setQuery(search, true);
-            }
-        }
-    }
-    */
 
     private void checkDoze() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
