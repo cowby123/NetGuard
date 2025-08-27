@@ -9,7 +9,6 @@
     <string name="app_first">Great care has been taken to develop and test APP, however it is impossible to guarantee APP will work correctly on every device.</string>
     <string name="app_agree">I agree</string>
     <string name="app_disagree">I disagree</string>
-    <string name="app_support">APP needs your help. Tap to purchase pro features to keep the project going.</string>
     <string name="app_qap">
         Google was going to remove the app from the Play Store because it requested permission to query all apps.
         Five appeals and providing a good justification about why this permission is needed were rejected.
