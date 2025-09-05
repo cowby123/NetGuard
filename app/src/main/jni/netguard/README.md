@@ -49,9 +49,9 @@ System.loadLibrary("netguard");
 
 1. 建立支援 NDK 與 CMake 的新專案，並安裝相容的 Android NDK/CMake 版本。
 2. 將本目錄 `netguard` 複製到新專案的 `app/src/main/jni/`。 
-3. 在新專案的 `CMakeLists.txt` 中加入與本專案相同的 `add_library`、`include_directories` 與 `target_link_libraries` 設定，將來源編譯成 `libnetguard.so`。
-4. 修改 `app/build.gradle` 啟用 `externalNativeBuild`，指定上述 `CMakeLists.txt` 並設置需要的 NDK 版本與 `abiFilters`。
-5. 在 Java/Kotlin 層建立一個 `VpnService` 類別（可複製 `ServiceSinkhole.java` 或自訂類別），在其中宣告對應的 `native` 方法：
+3. 在新專案的 `CMakeLists.txt` 中加入與本專案相同的 `add_library`、`include_directories` 與 `target_link_libraries` 設定，將來源編譯成 `libnetguard.so`（可參考本專案的 [`app/CMakeLists.txt`](../../../../CMakeLists.txt)）。
+4. 修改 `app/build.gradle` 啟用 `externalNativeBuild`，指定上述 `CMakeLists.txt` 並設置需要的 NDK 版本與 `abiFilters`（可參考 [`app/build.gradle`](../../../../build.gradle) 中的設定）。
+5. 在 Java/Kotlin 層建立一個 `VpnService` 類別（可參考 [`ServiceSinkhole.java`](../../java/eu/faircode/netguard/ServiceSinkhole.java) 或自訂類別），並在 `AndroidManifest.xml` 中宣告該服務（參考 [`app/src/main/AndroidManifest.xml`](../../AndroidManifest.xml)）。在其中宣告對應的 `native` 方法：
 
    ```java
    static {
@@ -67,6 +67,6 @@ System.loadLibrary("netguard");
    ```
 
 6. 在 `VpnService` 啟動後，透過 `jni_init` 建立原生 context，將 `VpnService.Builder` 取得的 TUN 檔案描述符傳入 `jni_run` 啟動事件迴圈。
-7. 實作 `usage(Usage usage)`、`log(Packet packet, int connection, boolean interactive)` 等回呼方法，以接收原生層回報的連線與流量資訊。
+7. 實作 `usage(Usage usage)`、`log(Packet packet, int connection, boolean interactive)` 等回呼方法，以接收原生層回報的連線與流量資訊（可參考 [`ServiceSinkhole.java`](../../java/eu/faircode/netguard/ServiceSinkhole.java) 中的實作）。
 8. 停止服務時呼叫 `jni_stop` 與 `jni_clear` 釋放資源並結束原生執行緒。
 
