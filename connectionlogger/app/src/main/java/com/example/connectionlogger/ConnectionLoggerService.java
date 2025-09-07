@@ -5,6 +5,9 @@ import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import eu.faircode.netguard.Packet;
+import eu.faircode.netguard.Usage;
+
 // 透過 VPNService 監聽並紀錄網路連線的背景服務
 public class ConnectionLoggerService extends VpnService {
     // 廣播動作與附加訊息鍵值
@@ -78,21 +81,5 @@ public class ConnectionLoggerService extends VpnService {
         Intent intent = new Intent(ACTION_LOG);
         intent.putExtra(EXTRA_MESSAGE, msg);
         sendBroadcast(intent);
-    }
-
-    // 使用量資訊模型
-    public static class Usage {
-        @Override
-        public String toString() {
-            return "Usage{}";
-        }
-    }
-
-    // 封包資訊模型
-    public static class Packet {
-        @Override
-        public String toString() {
-            return "Packet{}";
-        }
     }
 }
