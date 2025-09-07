@@ -6,6 +6,8 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 public class ConnectionLoggerService extends VpnService {
+    public static final String ACTION_LOG = "com.example.connectionlogger.LOG";
+    public static final String EXTRA_MESSAGE = "message";
     static {
         System.loadLibrary("netguard");
     }
@@ -53,11 +55,19 @@ public class ConnectionLoggerService extends VpnService {
 
     // Callbacks from native layer
     public void usage(Usage usage) {
-        Log.i("ConnectionLogger", "usage: " + usage);
+        String msg = "usage: " + usage;
+        Log.i("ConnectionLogger", msg);
+        Intent intent = new Intent(ACTION_LOG);
+        intent.putExtra(EXTRA_MESSAGE, msg);
+        sendBroadcast(intent);
     }
 
     public void log(Packet packet, int connection, boolean interactive) {
-        Log.i("ConnectionLogger", "packet=" + packet + " connection=" + connection + " interactive=" + interactive);
+        String msg = "packet=" + packet + " connection=" + connection + " interactive=" + interactive;
+        Log.i("ConnectionLogger", msg);
+        Intent intent = new Intent(ACTION_LOG);
+        intent.putExtra(EXTRA_MESSAGE, msg);
+        sendBroadcast(intent);
     }
 
     public static class Usage {
