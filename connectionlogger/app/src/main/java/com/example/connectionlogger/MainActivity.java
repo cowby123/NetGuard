@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         logView = findViewById(R.id.logs); // 取得日誌顯示區域
         // 註冊接收器以接收來自服務的日誌廣播
-        registerReceiver(logReceiver, new IntentFilter(ConnectionLoggerService.ACTION_LOG));
+        registerReceiver(logReceiver,
+                new IntentFilter(ConnectionLoggerService.ACTION_LOG),
+                Context.RECEIVER_NOT_EXPORTED);
         // 啟動連線記錄服務
         startService(new Intent(this, ConnectionLoggerService.class));
     }
