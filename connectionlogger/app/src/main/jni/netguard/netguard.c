@@ -105,10 +105,10 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
     }
 }
 
-// JNI ServiceSinkhole
+// JNI ConnectionLoggerService
 
 JNIEXPORT jlong JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1init(
         JNIEnv *env, jobject instance, jint sdk) {
     struct context *ctx = ng_calloc(1, sizeof(struct context), "init");
     ctx->sdk = sdk;
@@ -139,7 +139,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1start(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1start(
         JNIEnv *env, jobject instance, jlong context, jint loglevel_) {
     struct context *ctx = (struct context *) context;
 
@@ -152,7 +152,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1start(
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1run(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1run(
         JNIEnv *env, jobject instance, jlong context, jint tun, jboolean fwd53, jint rcode) {
     struct context *ctx = (struct context *) context;
 
@@ -176,7 +176,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1run(
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1stop(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1stop(
         JNIEnv *env, jobject instance, jlong context) {
     struct context *ctx = (struct context *) context;
     ctx->stopping = 1;
@@ -187,19 +187,19 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1stop(
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1clear(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1clear(
         JNIEnv *env, jobject instance, jlong context) {
     struct context *ctx = (struct context *) context;
     clear(ctx);
 }
 
 JNIEXPORT jint JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1get_1mtu(JNIEnv *env, jobject instance) {
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1get_1mtu(JNIEnv *env, jobject instance) {
     return get_mtu();
 }
 
 JNIEXPORT jintArray JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1get_1stats(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1get_1stats(
         JNIEnv *env, jobject instance, jlong context) {
     struct context *ctx = (struct context *) context;
 
@@ -247,7 +247,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1get_1stats(
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1pcap(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1pcap(
         JNIEnv *env, jclass type,
         jstring name_, jint record_size, jint file_size) {
 
@@ -305,7 +305,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1pcap(
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1socks5(JNIEnv *env, jobject instance, jstring addr_,
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1socks5(JNIEnv *env, jobject instance, jstring addr_,
                                                       jint port, jstring username_,
                                                       jstring password_) {
     const char *addr = (*env)->GetStringUTFChars(env, addr_, 0);
@@ -332,7 +332,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1socks5(JNIEnv *env, jobject insta
 }
 
 JNIEXPORT void JNICALL
-Java_eu_faircode_netguard_ServiceSinkhole_jni_1done(
+Java_com_example_connectionlogger_ConnectionLoggerService_jni_1done(
         JNIEnv *env, jobject instance, jlong context) {
     struct context *ctx = (struct context *) context;
     log_android(ANDROID_LOG_INFO, "Done");
