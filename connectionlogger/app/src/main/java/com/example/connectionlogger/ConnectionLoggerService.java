@@ -5,6 +5,7 @@ import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import eu.faircode.netguard.Allowed;
 import eu.faircode.netguard.Packet;
 import eu.faircode.netguard.Usage;
 
@@ -81,5 +82,21 @@ public class ConnectionLoggerService extends VpnService {
         Intent intent = new Intent(ACTION_LOG);
         intent.putExtra(EXTRA_MESSAGE, msg);
         sendBroadcast(intent);
+    }
+
+    // 檢查封包是否允許，這裡預設全部允許
+    private Allowed isAddressAllowed(Packet packet) {
+        // 標記封包為允許
+        packet.allowed = true;
+
+        // 紀錄並廣播允許訊息
+        String msg = "allow " + packet;
+        Log.i("ConnectionLogger", msg);
+        Intent intent = new Intent(ACTION_LOG);
+        intent.putExtra(EXTRA_MESSAGE, msg);
+        sendBroadcast(intent);
+
+        // 回傳允許結果，未進行重新導向
+        return new Allowed();
     }
 }
