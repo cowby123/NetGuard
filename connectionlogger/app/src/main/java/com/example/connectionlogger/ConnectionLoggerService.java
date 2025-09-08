@@ -1,9 +1,15 @@
 package com.example.connectionlogger;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.VpnService;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
+import android.os.Process;
 import android.util.Log;
+
+import java.net.InetSocketAddress;
 
 import eu.faircode.netguard.Allowed;
 import eu.faircode.netguard.Packet;
@@ -82,6 +88,25 @@ public class ConnectionLoggerService extends VpnService {
         Intent intent = new Intent(ACTION_LOG);
         intent.putExtra(EXTRA_MESSAGE, msg);
         sendBroadcast(intent);
+    }
+
+    // Called from native code
+    @TargetApi(Build.VERSION_CODES.Q)
+    private int getUidQ(int version, int protocol, String saddr, int sport, String daddr, int dport) {
+        if (protocol != 6 /* TCP */ && protocol != 17 /* UDP */)
+            return Process.INVALID_UID;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        if (cm == null)
+            return Process.INVALID_UID;
+
+        InetSocketAddress local = new InetSocketAddress(saddr, sport);
+        InetSocketAddress remote = new InetSocketAddress(daddr, dport);
+
+        Log.i("ConnectionLogger", "Get uid local=" + local + " remote=" + remote);
+        int uid = cm.getConnectionOwnerUid(protocol, local, remote);
+        Log.i("ConnectionLogger", "Get uid=" + uid);
+        return uid;
     }
 
     // 檢查封包是否允許，這裡預設全部允許
