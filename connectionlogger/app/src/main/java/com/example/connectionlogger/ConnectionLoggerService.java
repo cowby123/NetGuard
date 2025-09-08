@@ -89,6 +89,7 @@ public class ConnectionLoggerService extends VpnService {
         String msg = "usage: " + usage;
         Log.i("ConnectionLogger", msg);
         Intent intent = new Intent(ACTION_LOG);
+        intent.setPackage(getPackageName());
         intent.putExtra(EXTRA_MESSAGE, msg);
         sendBroadcast(intent);
     }
@@ -97,6 +98,7 @@ public class ConnectionLoggerService extends VpnService {
         String msg = "packet=" + packet + " connection=" + connection + " interactive=" + interactive;
         Log.i("ConnectionLogger", msg);
         Intent intent = new Intent(ACTION_LOG);
+        intent.setPackage(getPackageName());
         intent.putExtra(EXTRA_MESSAGE, msg);
         sendBroadcast(intent);
     }
@@ -129,6 +131,7 @@ public class ConnectionLoggerService extends VpnService {
         String msg = "allow " + packet;
         Log.i("ConnectionLogger", msg);
         Intent intent = new Intent(ACTION_LOG);
+        intent.setPackage(getPackageName());
         intent.putExtra(EXTRA_MESSAGE, msg);
         sendBroadcast(intent);
 
