@@ -46,7 +46,15 @@ public class ConnectionLoggerService extends VpnService {
             handle = jni_init(android.os.Build.VERSION.SDK_INT);
             Builder builder = new Builder();
             builder.addAddress("10.1.10.1", 32);
+            // IPv6 位址與路由以捕捉 Chrome 等應用的 IPv6 流量
+            builder.addAddress("fd00:1:fd00:1::1", 128);
             builder.addRoute("0.0.0.0", 0);
+            builder.addRoute("::", 0);
+            // 攔截常見區域網段
+            builder.addRoute("192.168.0.0", 16);
+            // 從 Android 13 開始讓本地流量也走 VPN
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                builder.setLocalTrafficAllowed(false);
             try {
                 ParcelFileDescriptor pfd = builder.establish();
                 if (pfd != null) {
