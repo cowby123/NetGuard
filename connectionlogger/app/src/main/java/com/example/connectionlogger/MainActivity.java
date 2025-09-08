@@ -5,14 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.widget.TextView;
 import android.net.VpnService;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // 主介面活動，負責顯示從服務傳來的連線日誌
 public class MainActivity extends AppCompatActivity {
-    // 用於顯示日誌文字的視圖
-    private TextView logView;
+    // RecyclerView 與其適配器
+    private RecyclerView recyclerView;
+    private LogAdapter adapter;
 
     // 請求 VPN 權限的要求代碼
     private static final int REQUEST_VPN = 1;
@@ -24,8 +29,11 @@ public class MainActivity extends AppCompatActivity {
             // 取得服務發送的日誌訊息
             String msg = intent.getStringExtra(ConnectionLoggerService.EXTRA_MESSAGE);
             if (msg != null) {
-                // 將日誌訊息顯示在畫面上
-                logView.append(msg + "\n");
+                // 更新列表並顯示最新訊息
+                List<LogItem> current = new ArrayList<>(adapter.getCurrentList());
+                current.add(new LogItem(System.currentTimeMillis(), msg));
+                adapter.submitList(current);
+                recyclerView.scrollToPosition(current.size() - 1);
             }
         }
     };
@@ -34,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        logView = findViewById(R.id.logs); // 取得日誌顯示區域
+        recyclerView = findViewById(R.id.log_list);
+        adapter = new LogAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
         // 註冊接收器以接收來自服務的日誌廣播
         registerReceiver(logReceiver,
                 new IntentFilter(ConnectionLoggerService.ACTION_LOG),
@@ -66,7 +77,9 @@ public class MainActivity extends AppCompatActivity {
                 startService(new Intent(this, ConnectionLoggerService.class));
             } else {
                 // 使用者拒絕權限
-                logView.append("VPN permission denied\n");
+                List<LogItem> current = new ArrayList<>(adapter.getCurrentList());
+                current.add(new LogItem(System.currentTimeMillis(), "VPN permission denied"));
+                adapter.submitList(current);
             }
         }
     }
