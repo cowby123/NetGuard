@@ -7,6 +7,8 @@ import android.net.VpnService;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.os.Process;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
 import java.net.InetSocketAddress;
@@ -35,6 +37,7 @@ public class ConnectionLoggerService extends VpnService {
 
     // 保存原生層回傳的操作代號
     private long handle;
+    private HandlerThread jniThread;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -49,7 +52,11 @@ public class ConnectionLoggerService extends VpnService {
                 if (pfd != null) {
                     // 開始並運行記錄服務
                     jni_start(handle, 0);
-                    jni_run(handle, pfd.getFd(), true, 0);
+                    jniThread = new HandlerThread("ConnectionLoggerJni");
+                    jniThread.start();
+                    Handler handler = new Handler(jniThread.getLooper());
+                    final int fd = pfd.getFd();
+                    handler.post(() -> jni_run(handle, fd, true, 0));
                 } else {
                     // 建立 TUN 失敗
                     Log.e("ConnectionLogger", "Failed to establish TUN");
@@ -69,6 +76,10 @@ public class ConnectionLoggerService extends VpnService {
             jni_stop(handle);
             jni_clear(handle);
             handle = 0;
+        }
+        if (jniThread != null) {
+            jniThread.quitSafely();
+            jniThread = null;
         }
         super.onDestroy();
     }

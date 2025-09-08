@@ -8,7 +8,7 @@ ConnectionLogger 是一個示範專案，展示如何以 NetGuard 的 VPN 引擎
 2. `ConnectionLoggerService` 擴充自 Android `VpnService`，在 `onStartCommand` 中：
    - 透過 JNI 載入 `libnetguard` 原生程式庫並呼叫 `jni_init` 建立原生 context。
    - 使用 `VpnService.Builder` 建立虛擬的 TUN 介面，設定位址和路由。
-   - 成功建立 TUN 後，呼叫 `jni_start` 啟動記錄器，接著以檔案描述符與 `jni_run` 執行事件迴圈。
+   - 成功建立 TUN 後，呼叫 `jni_start` 啟動記錄器，並在 `HandlerThread` 上以檔案描述符傳入 `jni_run` 執行事件迴圈。
    - 原生層透過回呼 `usage(Usage)` 與 `log(Packet, int, boolean)` 回報流量統計與封包詳細資料，並寫入 Android 的 `Logcat`。
 3. 服務被停止時，會依序呼叫 `jni_stop` 與 `jni_clear` 釋放資源。
 
