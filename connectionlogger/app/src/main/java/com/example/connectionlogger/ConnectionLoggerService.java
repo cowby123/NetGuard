@@ -53,8 +53,16 @@ public class ConnectionLoggerService extends VpnService {
             // 攔截常見區域網段
             builder.addRoute("192.168.0.0", 16);
             // 從 Android 13 開始讓本地流量也走 VPN
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                builder.setLocalTrafficAllowed(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                try {
+                    // 使用反射以維持舊版 API 的相容性
+                    VpnService.Builder.class
+                            .getMethod("setLocalTrafficAllowed", boolean.class)
+                            .invoke(builder, false);
+                } catch (Exception ex) {
+                    Log.w("ConnectionLogger", "setLocalTrafficAllowed unavailable", ex);
+                }
+            }
             try {
                 ParcelFileDescriptor pfd = builder.establish();
                 if (pfd != null) {
